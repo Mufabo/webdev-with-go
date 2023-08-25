@@ -22,11 +22,13 @@ Note: You can shutdown the server using **ctrl+c**
 
 A web application in Golang consists basically of three parts
 
-* a Handler
+* a Handler or Handlefunc
 * a servemux
 * a server
 
-## Handlers
+In our example we are using a single handlefunc, getHomeHandleFunc. We are using the default ServeMux and Server from the http package. More on that later.
+
+## Handlers and HandleFuncs
 
 A Handler is what processes the HTTP request and writes the HTTP response.
 In our example we are using a *HandleFunc*, that takes two arguments, a http.ResponseWriter and a pointer to a http.Request.
