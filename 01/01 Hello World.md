@@ -181,48 +181,53 @@ func TestGETHelloWorld(t *testing.T) {
 ---
 
 Recreate the hello world example.
-
-* [ ] There are tests for your code
-* [ ] Don't use the default Servemux, create your own
-* [ ] Your server listens on port 8080
-* [ ] Your server responds with "Hello World!" to requests.
-
-![](assets/20230813_210523_hello-world.png)
-
----
-
----
-
----
-
-## Exercise 02: New Paths
-
----
-
 Extend the "hello world" program, the server should respond with "Correct!" to requests to path ``/correct``
 
 * [ ] There are tests for your code
 * [ ] Don't use the default Servemux, create your own
 * [ ] Your server listens on port 8080
-* [ ] Your server responds with "Hello World!" to requests to /
+* [ ] Your server responds with "Hello World!" to requests.
+  ![](assets/20230813_210523_hello-world.png)
 * [ ] Your server responds with "Correct!" to requests to /correct.
 
 Note: How does your server respond to requests at path ``/hello`` ?
 
 Hint: You need to create a new handleFunc and bind it to the path "/correct" in your ServeMux
+---------------------------------------------------------------------------------------------
 
 ---
 
----
+## Fixed path vs Subtreepaths
 
-## Absolute vs Subtreepaths
+Golang net/http support two kinds of path patterns, fixed path and subtree paths.
+Subtree paths are those that end with ``/`` eg ``/fixed/`` or just ``/``. If it doesn't end with a /, it is a fixed path.
+
+Fixed paths have to match exactly, whereas subtree paths are treated as if they had a wildcard appended.
+Subtree paths also uses longest path matching.
+
+Let us illustrate this with some examples:
+
+```go
+mux.HandleFunc("/", handleFunc1)
+mux.HandleFunc("/files/", handleFiles)
+mux.HandleFunc("/files/list", listFiles)
+```
+
+A request to ``/`` will execute handleFunc1.
+A request to ``/hello`` would also execute handleFunc1, since ``/`` is the longest matching subtree path.
+A request to ``/files/movies`` or ``/files/books`` would both execute handleFiles, since longest matching bound path is ``/files``
+A request to ``/files/list`` would execute listFiles, since it is the longest matching path and matches exactly, whereas a request ``/files/list/`` would execute handleFiles, because it is a subtree path and the longest matching path is ``/files/``
+
+That is alsow why a request to ``/hello`` to ``/`` in the exercise above returns "Hello World!". The longest matching subtree path is ``/``
 
 ## Request parameters
 
 Information can be sent to the server as request parameters. Let's first familiarize ourselves with the way in which the request parameters are added to the address. For example, in a request ``http://localhost:8080/salaisuus?onko=naurisis`` a parameter called onko, whose value is defined as the value naurisis.
-Adding parameters to the request is done by adding a question mark after the address, followed by the name of the parameter, an equal sign and the value to be given to the parameter. The parameters in the request can be accessed using http.Request pointer ``r`` by ``r.URL.Query().Get(PARAM_NAME_AS_STRING)``. By default, the request parameter is returned as a string.
+Adding parameters to the request is done by adding a question mark after the address, followed by the name of the parameter, an equal sign and the value to be given to the parameter.
 
-The application in the example below greets all requesters. The program handles the path ``/hello`` requests and returns a greeting in response. The following is added to the greeting in the request name-parameter value.
+The parameters in the request can be accessed using http.Request pointer ``r`` by ``r.URL.Query().Get(PARAM_NAME_AS_STRING)``. By default, the request parameter is returned as a string. You can get all request parameters, with just ``r.Url.Query()`` , which returns the parameters as a map with string keys and string array values (``map[string][]string``), where the keys are the names of the request parameters.
+
+The application in the example below greets all requesters. The program handles the path ``/hello`` requests and returns a greeting in response. The following is added to the greeting in the request name-parameter value. You can pass multiple request parameters by concatinating them with ``&`` eg ``/hello?name=alice&age=55`` will pass the parameters ``name`` and ``age`` to the server.
 
 ```go
 package main
@@ -241,25 +246,30 @@ func main() {
 	mux.HandleFunc("/hello", getHelloHandleFunc)
 	http.ListenAndServe(":8080", mux)
 }
-}
 ```
 
 ---
 
-## Exercise 03: Request Parameters
+## Exercise 02: Request Parameters
 
 ---
 
 Extend the "hello world" program, the server should respond with "hello" + a name passed as a request parameter to path ``/hello``.
-You can arbitrarily name the parameter.
 If no parameter is given, return "Hello World!"
+
+Additionally, add a new path ``/params``. A GET request to ``/params`` should return all the request parameters and their values.
+This should work with an arbitrary number of parameters.
+
+Add a path ``sum``. A GET request to ``/sum`` should return the sum of all the request parameters, assume that they are all representation of numeric values.
+This should work with an arbitrary number of parameters. Keep in mind that request parameters are passed as Strings.
 
 * [ ] There are tests for your code
 * [ ] GET ``/hello`` returns "Hello World!"
 * [ ] GET ``/hello?name=Alice`` returns "Hello Alice!"
+* [ ] GET ``/params`` returns all request parameters and their values in a reasonably well formatted form, eg![](assets/20230826_193153_image.png)
+* [ ] GET ``/params`` returns the sum of all request parameters, eg
+  ![](assets/20230826_194255_image.png)
 
 ---
 
 ---
-
-You can pass multiple request parameters by concatinating them with ``&`` eg ``/hello?name=alice&age=55`` will pass the parameters ``name`` and ``age`` to the server.
