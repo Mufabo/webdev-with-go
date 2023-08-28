@@ -1,9 +1,9 @@
 go 1.20
 
 use (
-	./code_samples/01_A_hello_world
-	./code_samples/01_D_hello_name
-	./code_samples/01_E_arbitrary_request_params
-	./code_samples/01_hello_world_handleFunc
-	./code_samples/01_hello_world_handler
+	./code_samples/01_Hello_Web!/01_A_hello_world
+	./code_samples/01_Hello_Web!/01_D_hello_name
+	./code_samples/01_Hello_Web!/01_E_arbitrary_request_params
+	./code_samples/01_Hello_Web!/01_C_hello_world_handleFunc
+	./code_samples/01_Hello_Web!/01_B_hello_world_handler
 )

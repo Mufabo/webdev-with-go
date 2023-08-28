@@ -3,7 +3,7 @@
 The following code starts a http server, that listens on port 8080 and responds to all requests with "Hello World"
 
 ````go
-// 01 Hello World
+// 01_A_hello_world
 package main
 
 import "net/http"
@@ -26,7 +26,9 @@ A web application in Golang consists basically of three parts
 * a servemux
 * a server
 
-In our example we are using a single handlefunc, getHomeHandleFunc. We are using the default ServeMux and Server from the http package. More on that later.
+In our example we are using a single handlefunc, ``getHomeHandleFunc``.
+We are using the default ServeMux and Server from the http package.
+More on that later.
 
 ## Handlers and HandleFuncs
 
@@ -45,6 +47,7 @@ type Handler interface {
 Using a handler, our example would look like this:
 
 ````go
+// 01_B_hello_world_handler
 package main
 
 import "net/http"
@@ -80,6 +83,7 @@ You can find more information here: [https://www.willem.dev/articles/http-handle
 The process of turning a function to a handler is illustrated in the following example:
 
 ```go
+// 01_C_hello_world_handleFunc
 package main
 
 import "net/http"
@@ -115,11 +119,12 @@ In our example we are mapping the path "/" to the getHomeHandleFunc using the de
 This servemux is a global variable, thus it is possible that an imported package assigns routes to the default mux without you being aware of it. Hence it is usually a good idea to create your own ServeMux:
 
 ````go
-//We create our own ServeMux by calling the NewServeMux function from the http package and assign its return value to a variable, which is our new ServeMux, aptly named mux in our example.
+//We create our own ServeMux by calling the NewServeMux function from the http package and 
+//assign its return value to a variable, which is our new ServeMux, aptly named mux in our example.
 mux := http.NewServeMux()
 
-// We assign getHomeHandleFunc to the basic path "/" by calling the HandleFunc method of our ServeMux and pass our mux as the second parameter to the server.
-// If we wanted th
+// We assign getHomeHandleFunc to the basic path "/" by calling the HandleFunc method of our ServeMux 
+// and pass our mux as the second parameter to the server.
 mux.HandleFunc("/", getHomeHandleFunc)
 http.ListenAndServe(":8080", mux)
 ````
